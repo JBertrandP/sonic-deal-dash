@@ -70,7 +70,7 @@ app.post('/api/wishlist', async (req, res) => {
         // 4. GENERAR CORREO CON ETHEREAL 
         
         // 4. INTENTO DE ENVÍO DE CORREO (Con Tolerancia a Fallos)
-        let emailUrl = "https://ethereal.email/messages"; // Enlace por defecto a tu bandeja general
+        let emailUrl = "https://ethereal.email/messages"; 
 
         try {
             let transporter = nodemailer.createTransport({
@@ -78,7 +78,7 @@ app.post('/api/wishlist', async (req, res) => {
                 port: 587,
                 secure: false,
                 auth: { 
-                    user: "jarod.hartmann92@ethereal.email ", 
+                    user: "jarod.hartmann92@ethereal.email", 
                     pass: "	4W6T3u3HBtWR3CyKpV" 
                 }
             });
@@ -98,7 +98,7 @@ app.post('/api/wishlist', async (req, res) => {
                 `
             });
 
-            // Si el proveedor de la nube nos deja mandarlo, te damos el link exacto
+            // Si el proveedor de la nube deja mandarlo, damos el link exacto
             emailUrl = nodemailer.getTestMessageUrl(info) || emailUrl;
             console.log("Correo enviado con éxito.");
             
@@ -107,11 +107,11 @@ app.post('/api/wishlist', async (req, res) => {
             console.log("El firewall de la nube bloqueó el SMTP, pero la DB se guardó bien.");
         }
 
-        // SIEMPRE le respondemos al Frontend con un Éxito, pase lo que pase con el correo.
+        // Le respondemos al Frontend con un Éxito, pase lo que pase con el correo.
         res.status(201).json({ message: 'Proceso completado', emailUrl: emailUrl });
 
     } catch (error) {
-        // Solo llegamos aquí si falla Supabase o CheapShark
+        // Solo llegam aqui si falla Supabase o CheapShark
         console.error("Error crítico:", error);
         res.status(500).json({ error: error.message });
     }
