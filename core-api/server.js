@@ -67,19 +67,23 @@ app.post('/api/wishlist', async (req, res) => {
             body: JSON.stringify(dbPayload)
         });
 
-        // 4. GENERAR CORREO CON ETHEREAL
-        let testAccount = await nodemailer.createTestAccount();
+        // 4. GENERAR CORREO CON ETHEREAL 
+        
         let transporter = nodemailer.createTransport({
             host: "smtp.ethereal.email",
             port: 587,
             secure: false,
-            auth: { user: testAccount.user, pass: testAccount.pass }
+            auth: { 
+                user: "jarod.hartmann92@ethereal.email", 
+                pass: "	4W6T3u3HBtWR3CyKpV" 
+            }
         });
 
         let info = await transporter.sendMail({
-            from: '"Sonic AI Predictor 🦔" <alerts@sonicdeals.com>',
+            from: '"Sonic AI Predictor " <alerts@sonicdeals.com>',
+            
             to: userEmail,
-            subject: ` Análisis y Predicción para ${gameName}`,
+            subject: `🤖 Análisis y Predicción para ${gameName}`,
             html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px solid #0dcaf0; border-radius: 10px;">
                     <h2 style="color: #0dcaf0;">Reporte de Radar Sonic 🦔</h2>
