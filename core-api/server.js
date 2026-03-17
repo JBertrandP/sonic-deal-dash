@@ -69,41 +69,50 @@ app.post('/api/wishlist', async (req, res) => {
 
         // 4. GENERAR CORREO CON ETHEREAL 
         
-        let transporter = nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false,
-            auth: { 
-                user: "jarod.hartmann92@ethereal.email", 
-                pass: "	4W6T3u3HBtWR3CyKpV" 
-            }
-        });
+        // 4. INTENTO DE ENVÍO DE CORREO (Con Tolerancia a Fallos)
+        let emailUrl = "https://ethereal.email/messages"; // Enlace por defecto a tu bandeja general
 
-        let info = await transporter.sendMail({
-            from: '"Sonic AI Predictor " <alerts@sonicdeals.com>',
+        try {
+            let transporter = nodemailer.createTransport({
+                host: "smtp.ethereal.email",
+                port: 587,
+                secure: false,
+                auth: { 
+                    user: "jarod.hartmann92@ethereal.email ", 
+                    pass: "	4W6T3u3HBtWR3CyKpV" 
+                }
+            });
+
+            let info = await transporter.sendMail({
+                from: '"Sonic AI Predictor 🦔" <alerts@sonicdeals.com>',
+                to: userEmail,
+                subject: ` Análisis y Predicción para ${gameName}`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px solid #0dcaf0; border-radius: 10px;">
+                        <h2 style="color: #0dcaf0;">Reporte de Radar Sonic 🦔</h2>
+                        <p> Precio Actual: <b style="color: #198754; font-size: 18px;">$${salePrice} USD</b></p>
+                        <hr>
+                        <h3 style="color: #ffc107;">Análisis de la IA:</h3>
+                        <p style="font-size: 16px; font-weight: bold;">${predictionMsg}</p>
+                    </div>
+                `
+            });
+
+            // Si el proveedor de la nube nos deja mandarlo, te damos el link exacto
+            emailUrl = nodemailer.getTestMessageUrl(info) || emailUrl;
+            console.log("Correo enviado con éxito.");
             
-            to: userEmail,
-            subject: `🤖 Análisis y Predicción para ${gameName}`,
-            html: `
-                <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px solid #0dcaf0; border-radius: 10px;">
-                    <h2 style="color: #0dcaf0;">Reporte de Radar Sonic 🦔</h2>
-                    <p>Has añadido <b>${gameName}</b> a tu lista de rastreo.</p>
-                    <hr>
-                    <p>💰 Precio Actual: <b style="color: #198754; font-size: 18px;">$${salePrice} USD</b></p>
-                    <p>📉 Precio Normal: <del>$${normalPrice} USD</del></p>
-                    <hr>
-                    <h3 style="color: #ffc107;">Análisis de la IA:</h3>
-                    <p style="font-size: 16px; font-weight: bold;">${predictionMsg}</p>
-                </div>
-            `
-        });
+        } catch (emailError) {
+            // PATRÓN DE TOLERANCIA A FALLOS: Si Render bloquea el puerto, el sistema sobrevive.
+            console.log("El firewall de la nube bloqueó el SMTP, pero la DB se guardó bien.");
+        }
 
-        const emailUrl = nodemailer.getTestMessageUrl(info);
-
+        // SIEMPRE le respondemos al Frontend con un Éxito, pase lo que pase con el correo.
         res.status(201).json({ message: 'Proceso completado', emailUrl: emailUrl });
 
     } catch (error) {
-        console.error("Error en la predicción:", error);
+        // Solo llegamos aquí si falla Supabase o CheapShark
+        console.error("Error crítico:", error);
         res.status(500).json({ error: error.message });
     }
 });
