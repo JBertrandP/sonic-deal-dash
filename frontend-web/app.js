@@ -1,51 +1,63 @@
 const API_URL = 'http://localhost:3000/api';
 
-// 1. Escuchar el evento del botón Guardar
+// Manejar el formulario de la Wishlist
 document.getElementById('wishlistForm').addEventListener('submit', async (e) => {
-    e.preventDefault(); // ¡Esto evita que la página se recargue y cause el error file:/// !
-    
-    const game_name = document.getElementById('gameName').value;
-    const user_email = document.getElementById('userEmail').value;
+    e.preventDefault();
+    const gameName = document.getElementById('gameName').value;
+    const userEmail = document.getElementById('userEmail').value;
+    const statusMsg = document.getElementById('statusMessage');
+    const emailContainer = document.getElementById('emailLinkContainer');
+
+    statusMsg.innerText = "🤖 Sonic procesando predicción y generando correo...";
+    statusMsg.className = "mt-3 text-info fw-bold text-center";
+    emailContainer.innerHTML = ''; 
 
     try {
         const response = await fetch(`${API_URL}/wishlist`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                game_name: game_name, 
-                user_email: user_email, 
-                current_price: 59.99, 
-                world_record_time: 'N/A' 
-            })
+            body: JSON.stringify({ game_name: gameName, user_email: userEmail })
         });
 
         if (response.ok) {
-            document.getElementById('statusMessage').innerText = "Data Saved ✅";
+            const data = await response.json();
+            
+            statusMsg.innerText = "¡Datos guardados y Predicción completada! ";
+            statusMsg.className = "mt-3 text-success fw-bold text-center";
+            
+            // Botón para ver el correo
+            emailContainer.innerHTML = `
+                <a href="${data.emailUrl}" target="_blank" class="btn btn-warning btn-sm w-100 shadow-sm animate__animated animate__pulse animate__infinite">
+                     Ver Correo de Predicción Generado!
+                </a>
+            `;
+
             document.getElementById('wishlistForm').reset();
-            loadTrackingList();
+            loadTrackingList(); // Recarga la lista de abajo para mostrar el precio real
         } else {
-            document.getElementById('statusMessage').innerText = "Error: El servidor rechazó los datos ";
+            statusMsg.innerText = "Error: Se bloqueó la señal. ";
+            statusMsg.className = "mt-3 text-danger fw-bold text-center";
         }
     } catch (error) {
-        console.error("Error de conexión:", error);
-        document.getElementById('statusMessage').innerText = "Error: No hay conexión con la API ";
+        statusMsg.innerText = "Error de conexión con la nube. ";
+        statusMsg.className = "mt-3 text-danger fw-bold text-center";
     }
 });
 
-// 2. Medir la latencia (Performance Metric para tu reporte)
+// 2. Medir la latencia 
 async function checkHealth() {
     try {
         const start = performance.now();
         await fetch(`${API_URL}/health`);
         const end = performance.now();
-        // Cambiamos el formato para evitar el SyntaxError de la línea 29
+        
         console.log("API Latency: " + (end - start).toFixed(2) + " ms"); 
     } catch (err) {
         console.error("La API está apagada");
     }
 }
 
-// Función auxiliar para dibujar las tarjetas HTML
+// Funcion auxiliar para dibujar las tarjetas HTML
 function createCardHTML(game, showSpeedrunBtn) {
     // Generar botones de speedrun dinámicamente
     let speedrunButtonsHTML = '';
@@ -85,18 +97,18 @@ async function loadSonicCatalog() {
         const response = await fetch(`${API_URL}/sonic-games`);
         const data = await response.json();
         
-        // Limpiamos los contenedores
+        // Limpiar los contenedores
         gridSpeedruns.innerHTML = '';
         gridDeals.innerHTML = '';
 
-        // Dibujamos Lista 1 (Juegos con Speedruns)
+        // Dibujar Lista 1 (Juegos con Speedruns)
         if (data.speedruns.length > 0) {
             data.speedruns.forEach(game => gridSpeedruns.innerHTML += createCardHTML(game, true));
         } else {
             gridSpeedruns.innerHTML = '<p class="text-muted">No hay juegos principales en oferta hoy.</p>';
         }
 
-        // Dibujamos Lista 2 (DLCs y Extras)
+        // Dibujar Lista 2 (DLCs y Extras)
         if (data.deals.length > 0) {
             data.deals.forEach(game => gridDeals.innerHTML += createCardHTML(game, false));
         } else {
@@ -119,21 +131,21 @@ async function loadSonicCatalog() {
     }
 }
 
-// NUEVA FUNCIÓN: Traer los datos de Supabase y mostrarlos en pantalla
+// Traer los datos de Supabase y mostrarlos en pantalla
 async function loadTrackingList() {
     const trackingList = document.getElementById('trackingList');
     try {
         const response = await fetch(`${API_URL}/wishlist`);
         const data = await response.json();
 
-        trackingList.innerHTML = ''; // Limpiamos la lista
+        trackingList.innerHTML = ''; 
 
         if (data.length === 0) {
             trackingList.innerHTML = '<li class="list-group-item bg-secondary text-warning border-info">Aún no estás trackeando ningún juego.</li>';
             return;
         }
 
-        // Recorremos la base de datos y creamos un elemento de lista por cada juego
+        // Recorrer la base de datos y crear un elemento de lista por cada juego
         data.forEach(item => {
             trackingList.innerHTML += `
                 <li class="list-group-item bg-secondary text-white border-info d-flex justify-content-between align-items-center">
@@ -151,7 +163,7 @@ async function loadTrackingList() {
     }
 }
 
-// Ejecutamos la función al abrir la página
+// Ejecutar la función al abrir la página
 loadTrackingList();
 
 loadSonicCatalog();
