@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonic Deal Dash - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark text-light">
+    <div class="container py-5">
+        <header class="text-center mb-5">
+            <h1 class="display-4 text-info">Sonic Deal Dash</h1>
+            <p class="lead">Track speedruns, prices, and predictions for the blue blur.</p>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card bg-secondary text-white p-3">
+                    <h3>Add to Wishlist</h3>
+                    <form id="wishlistForm">
+                        <input type="text" id="gameName" class="form-control mb-2" placeholder="Game Name (e.g. Sonic Racing Crossworlds)" required>
+                        <input type="email" id="userEmail" class="form-control mb-2" placeholder="Your Email" required>
+                        <button type="submit" class="btn btn-info w-100">Save to Cloud</button>
+                    </form>
+                </div>
+            </div>
+            
+          <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-info border-bottom border-info pb-2 mb-4">⏱️ Sonic Base Games & Speedruns</h2>
+                <div id="speedrunGrid" class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+                    <div class="text-center w-100"><div class="spinner-border text-info" role="status"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-12">
+                <h2 class="text-warning border-bottom border-warning pb-2 mb-4">🛒 DLCs, Expansions & Extras</h2>
+                <div id="dealsGrid" class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+                    </div>
+            </div>
+        </div>
+
+        <div class="row mt-5 mb-5">
+            <div class="col-12">
+                <div class="card bg-secondary text-white border-info shadow">
+                    <div class="card-header border-info">
+                        <h4 class="mb-0 text-info">📡 Current Tracking (Wishlist)</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul id="trackingList" class="list-group list-group-flush">
+                            <li class="list-group-item bg-secondary text-white border-info">Cargando tu radar...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
