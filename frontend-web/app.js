@@ -1,4 +1,4 @@
-const API_URL = 'https://sonic-core-api.onrender.com';
+const API_URL = 'https://sonic-core-api.onrender.com/api';
 
 // Manejar el formulario de la Wishlist
 document.getElementById('wishlistForm').addEventListener('submit', async (e) => {
