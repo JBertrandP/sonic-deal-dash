@@ -8,7 +8,7 @@ document.getElementById('wishlistForm').addEventListener('submit', async (e) => 
     const statusMsg = document.getElementById('statusMessage');
     const emailContainer = document.getElementById('emailLinkContainer');
 
-    statusMsg.innerText = "🤖 Sonic procesando predicción y generando correo...";
+    statusMsg.innerText = "Sonic procesando predicción y generando correo...";
     statusMsg.className = "mt-3 text-info fw-bold text-center";
     emailContainer.innerHTML = ''; 
 
